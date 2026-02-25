@@ -63,4 +63,9 @@ function void build_phase(uvm_phase phase);
 	`uvm_config_db #(env_config)::set(this,"*","env_config",e_cfg);
 	`uvm_config_db #(bit [7:0])::set(this,"*","lcr",lcr);
 	envh=uart_env::type_id::create("uart_env",this);
-	
+endfunction
+
+function void end_of_elaboration_phase(uvm_phase phase);
+	uvm_top.print_topology();
+endfunction
+endclass
