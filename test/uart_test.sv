@@ -52,6 +52,15 @@ function void config_test();
 endfunction
 
 function void build_phase(uvm_phase phase);
-super.build_phase(phase);
-e_cfg=env_config::type_id::create("e_cfg");
-envh=
+	super.build_phase(phase);
+	e_cfg=env_config::type_id::create("e_cfg");
+	if(has_agent)
+			begin
+				e_cfg.m_cfg=new[has_no_of_agent];
+				e_cfg.s_cfg=new[has_no_of_agent];
+			end
+	config_test();
+	`uvm_config_db #(env_config)::set(this,"*","env_config",e_cfg);
+	`uvm_config_db #(bit [7:0])::set(this,"*","lcr",lcr);
+	envh=uart_env::type_id::create("uart_env",this);
+	
