@@ -2,8 +2,8 @@ class base_test extends uvm_test;
 	`uvm_component_utils(base_test)
 	bit[7:0] lcr;
 	
-	env envh;
-	env_config e_cfg;
+	uart_env envh;
+	uart_env_config e_cfg;
 	apb_agent_config m_agt_cfg[];
 	uart_agent_config s_agt_cfg[];
 	
@@ -54,3 +54,4 @@ endfunction
 function void build_phase(uvm_phase phase);
 super.build_phase(phase);
 e_cfg=env_config::type_id::create("e_cfg");
+envh=
