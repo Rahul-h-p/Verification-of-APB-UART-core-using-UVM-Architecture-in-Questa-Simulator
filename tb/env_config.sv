@@ -1,5 +1,5 @@
-class env_config extends uvm_object;
-	`uvm_object_utils(env_config)
+class uart_env_config extends uvm_object;
+	`uvm_object_utils(uart_env_config)
 	
 	apb_agent_config m_cfg[];
 	uart_agent_config s_cfg[];
@@ -8,7 +8,7 @@ class env_config extends uvm_object;
 	bit has_virtual_seqr=1;
 	bit has_scoreboard=1;
 	
-	function new(string name="env_config");
+	function new(string name="uart_env_config");
 		super.new(name);
 	endfunction
 endclass
