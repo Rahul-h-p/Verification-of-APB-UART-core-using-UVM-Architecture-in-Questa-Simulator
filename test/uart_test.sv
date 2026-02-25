@@ -1,4 +1,4 @@
-class base_test extends uvm_test;
+class uart_test extends uvm_test;
 	`uvm_component_utils(base_test)
 	bit[7:0] lcr;
 	
