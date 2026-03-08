@@ -119,3 +119,4 @@ class scoreboard extends uvm_scoreboard;
                                 if(uart1.iir[3:1]==3'b001)
                                   `uvm_info(get_type_name(),"\n From Scoreboard= thr empty error", UVM_LOW)
                                   endfunction
+                                  endclass
