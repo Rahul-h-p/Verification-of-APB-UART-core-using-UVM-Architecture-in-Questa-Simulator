@@ -29,9 +29,26 @@ class scoreboard extends uvm_scoreboard;
     ADDRESS: coverpoint cov_data1.Paddr {bins add={[0:255]};}
     WR_ENB: coverpoint cov_data1.Pwrite {bins rd={0};
                                          bins wr={1};}
+    ERROR: coverpoint cov_data.Pslverr {bins p1={0};
+                                        bins p2={1};}
   endgroup
 
+covergroup apb_lcr_cov;
+  option.per_instance=1;
 
+  CHAR_SIZE: coverpoint cov_data1.lcr[1:0] {bins five={2'b00};
+                                            bins eight={2'b11};}
+  STOP_BIT: coverpoint cov_data1.lcr[2] {bins one={1'b0};
+                                         bins more={1'b1};}
+  PARITY: coverpoint cov_data.lcr[3] {bins no_parity ={1'b0};
+                                      bins parity_en={1'b1};}
+  Ev_odd_parity: coverpoint cov_data1.lcr[4] {bins odd_parity={1'b0}
+                                              bins even_parity={1'b1};}
+  STICK_PARITY: coverpoint cov_data1.lcr[5] {bins odd_parity = {1'b0};
+                                             bins even_parity=  {1'b1};}
+  BREAK: coverpoint cov_data.lcr[6] {bins low={1'b0};
+                                     bins high={1'b1};}
+  DIV_LCH: coverpoint 
   
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
