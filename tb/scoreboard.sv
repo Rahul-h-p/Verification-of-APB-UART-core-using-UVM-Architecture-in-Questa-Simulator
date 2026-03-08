@@ -104,4 +104,18 @@ class scoreboard extends uvm_scoreboard;
 
                     end
 
-                    if((uart1.iir
+                    if(uart1.iir[3:1] == 3) begin
+                      if(uart1.lsr[1]==1)
+                        `uvm_info(get_type_name(),"\nFrom Scoreboard= overrun error", UVM_LOW)
+                        if(uart1.lsr[2]==1)
+                          `uvm_info(get_type_name(),"\n From Scoreboard= parity error", UVM_LOW)
+                          if(uart1.lsr[3] ==1)
+                            `uvm_info(get_type_name(),"\n From Scoreboard= framing error", UVM_LOW)
+                            if(uart1.lsr[4]==1)
+                              `uvm_info(get_type_name(),"\n From Scoreboard= break interrupt error",UVM_LOW)
+                              end
+                              if(uart1.iir[3:1]==3'b110)
+                                `uvm_info(get_type_name(),"\n From Scoreboard= timeout error",UVM_LOW)
+                                if(uart1.iir[3:1]==3'b001)
+                                  `uvm_info(get_type_name(),"\n From Scoreboard= thr empty error", UVM_LOW)
+                                  endfunction
