@@ -41,6 +41,39 @@ class uart_lcr_reg extends uvm_reg;
     break_ctrl.configure(this,1,6,"RW",0,0,1,0,1);
 
     reserved = uvm_reg_field::type_id::create("reserved", ,get_full_name());
-    reserved.configure(this,1,3,"RW",0,0,1,0,0); //not accessible
+    reserved.configure(this,1,7,"RW",0,0,1,0,0); //not accessible
   endfunction
     
+  class ier_reg extends uvm_reg;
+    rand uvm_reg_field rx_int_en;  //bit0
+    rand uvm_reg_field tx_int_en; //bit1
+    rand uvm_reg_field line_status_int_en; //bit2
+    rand uvm_reg_field modem_status_int_en;   //bit3
+      uvm_reg_field reserved;   //bit7:4
+
+    `uvm_object_utils(ier_reg)
+
+    function new(string name="ier_reg");
+      super.new(name,8,UVM_NO_COVERAGE);
+    endfunction
+
+    virtual function void build();
+
+      rx_int_en = uvm_reg_field::type_id::create("rx_int_en", , get_full_name());
+      rx_int_en.configure (this,1,0,"RW",0,1'h0,1,0,1);
+
+      tx_int_en = uvm_reg_field::type_id::create("tx_int_en", , get_full_name());
+      tx_int_en.configure (this,1,1,"RW",0,1'h0,1,0,1);
+
+      line_status_int_en = uvm_reg_field::type_id::create("line_status_int_en", , get_full_name());
+      line_status_int_en.configure (this,1,2,"RW",0,1'h0,1,0,1);
+
+       modem_status_int_en = uvm_reg_field::type_id::create("modem_status_int_en", , get_full_name());
+      modem_status_int_en.configure (this,1,3,"RW",0,1'h0,1,0,1);
+
+      reserved= uvm_reg_field::type_id::create("reserved", , get_full_name());
+      reserved.configure (this,4,4,"RW",0,1'h0,1,0,0);
+
+    endfunction
+
+  endclass
