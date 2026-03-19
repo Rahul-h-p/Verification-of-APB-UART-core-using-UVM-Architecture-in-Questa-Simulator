@@ -1,27 +1,16 @@
 class scoreboard extends uvm_scoreboard;
   `uvm_component_utils(scoreboard)
-  env_config m_cfg;
+  uart_env_config m_cfg;
 
-  uvm_tlm_analysis_fifo #(apb_xtn) fifo_w;
-  uvm_tlm_analysis_fifo #(uart_xtn) fifo_r;
+  uvm_tlm_analysis_fifo #(write_xtn) fifo_w;
+  uvm_tlm_analysis_fifo #(read_xtn) fifo_r;
 
-  apb_xtn uart1;
-  uart_xtn uart2,uart3;
-  apb_xtn cov_data1;
-  uart_xtn cov_data2;
-  bit[7:0] rx[$], tx[$];
+  write_xtn uart1;
+  read_xtn uart2,uart3;
+  write_xtn cov_data1;
+  read_xtn cov_data2;// coverage is pending
+  //bit[7:0] rx[$], tx[$];
   int thrlsize, rbrlsize;
-
-  function new(string name="scoreboard", uvm_component parent);
-    super.new(name,parent);
-    apb_signals_cov=new();
-    apb_lcr_cov =new();
-    apb_ier_cov =new();
-    apb_fcr_cov =new();
-    apb_mcr_cov =new();
-    apb_iir_cov =new();
-    apb_lsr_cov =new();
-  endfunction
         
   covergroup apb_signals_cov;
     option.per_instance=1;
@@ -29,7 +18,7 @@ class scoreboard extends uvm_scoreboard;
     ADDRESS: coverpoint cov_data1.Paddr {bins add={[0:255]};}
     WR_ENB: coverpoint cov_data1.Pwrite {bins rd={0};
                                          bins wr={1};}
-    ERROR: coverpoint cov_data.Pslverr {bins p1={0};
+    ERROR: coverpoint cov_data1.Pslverr {bins p1={0};
                                         bins p2={1};}
   endgroup
 
@@ -40,17 +29,17 @@ covergroup apb_lcr_cov;
                                             bins eight={2'b11};}
   STOP_BIT: coverpoint cov_data1.lcr[2] {bins one={1'b0};
                                          bins more={1'b1};}
-  PARITY: coverpoint cov_data.lcr[3] {bins no_parity ={1'b0};
+  PARITY: coverpoint cov_data1.lcr[3] {bins no_parity ={1'b0};
                                       bins parity_en={1'b1};}
-  Ev_odd_parity: coverpoint cov_data1.lcr[4] {bins odd_parity={1'b0}
+  Ev_odd_parity: coverpoint cov_data1.lcr[4] {bins odd_parity={1'b0};
                                               bins even_parity={1'b1};}
   STICK_PARITY: coverpoint cov_data1.lcr[5] {bins odd_parity = {1'b0};
                                              bins even_parity=  {1'b1};}
-  BREAK: coverpoint cov_data.lcr[6] {bins low={1'b0};
+  BREAK: coverpoint cov_data1.lcr[6] {bins low={1'b0};
                                      bins high={1'b1};}
-  DIV_LCH: coverpoint cov_data.lcr[7] {bins low = {1'b0};
+  DIV_LCH: coverpoint cov_data1.lcr[7] {bins low = {1'b0};
                                        bins high={1'b1};}
-  LCR_RST: coverpoint cov_data.lcr[7:0] {bins lcr_rst ={8'd3};}
+  LCR_RST: coverpoint cov_data1.lcr[7:0] {bins lcr_rst ={8'd3};}
   cross_cover: cross CHAR_SIZE,STOP_BIT,  PARITY,  Ev_odd_parity,  STICK_PARITY, BREAK,  DIV_LCH, LCR_RST;
 endgroup
 
@@ -116,16 +105,36 @@ endgroup
   endgroup
   
     
-                                     
+          
+  function new(string name="scoreboard", uvm_component parent);
+    super.new(name,parent);
+    fifo_w=new("fifo_w",this);
+    fifo_r=new("fifo_r",this);
+
+    apb_signals_cov=new();
+    apb_lcr_cov =new();
+    apb_ier_cov =new();
+    apb_fcr_cov =new();
+    apb_mcr_cov =new();
+    apb_iir_cov =new();
+    apb_lsr_cov =new();
+
+  endfunction
+                           
                                          
   
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db#(env_config)::get(this,"","env_config",m_cfg))
+    if(!uvm_config_db#(uart_env_config)::get(this,"","uart_env_config",m_cfg))
       `uvm_fatal("CONFIG","cannot get config")
-      fifo_w=new["fifo_w",this];
-    fifo_r=new["fifo_r",this];
-  endfunction
+
+uart1 = write_xtn::type_id::create("uart1");
+uart2 = read_xtn::type_id::create("uart2");
+
+//uart1.thr = new[8];
+//uart1.rbr=new[8];
+
+      endfunction
 
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
@@ -164,7 +173,7 @@ endgroup
     `uvm_info(get_type_name(),$sformatf("values of uart1 =%p", uart1.thr),UVM_LOW)
     `uvm_info(get_type_name(),$sformatf("values of uart2 =%p", uart2.tx),UVM_LOW)
     `uvm_info(get_type_name(),$sformatf("values of uart1 =%p", uart1.rbr),UVM_LOW)
-    `uvm_info(get_type_name(),$sformatf("values of uart2 =%p", uart2.tx),UVM_LOW)
+    `uvm_info(get_type_name(),$sformatf("values of uart2 =%p", uart2.rx),UVM_LOW)
 
     if((uart1.iir[3:1] ==3'b010)) begin
       if((uart1.mcr[4] ==0)) begin
@@ -185,7 +194,7 @@ endgroup
                 if((uart1.Pwdata[7:0]==uart1.Prdata[7:0]))
                   `uvm_info(get_type_name(),"\n Scoreboard loopback comparison passed",UVM_LOW)
                   else
-                    `uvm_info(get_type_name(),\n"Scoreboard loopback comparison failed",UVM_LOW)
+                    `uvm_info(get_type_name(),"\nScoreboard loopback comparison failed",UVM_LOW)
                     end
 
                     end
