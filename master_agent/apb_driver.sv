@@ -50,7 +50,7 @@ class apb_driver extends uvm_driver #(write_xtn);
 					req.iir = vif.drv_cb.Prdata;
 					seq_item_port.put_response(req);
 				end
-		//	`uvm_info("DRIVER",$sformatf("printing from driver \n %s", req.sprint()),UVM_LOW) 
+			`uvm_info("DRIVER",$sformatf("printing from driver \n %s", req.sprint()),UVM_LOW) 
 
 	endtask						
 endclass
