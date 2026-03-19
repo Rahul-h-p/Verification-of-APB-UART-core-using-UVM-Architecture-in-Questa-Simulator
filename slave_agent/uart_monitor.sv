@@ -62,7 +62,7 @@ class uart_monitor extends uvm_monitor;
 
     wait (line ==1'b1);
     @(posedge vif.baud_o);      
-    wait (line==1'b0);
+    wait (line==1'b0); //start bit
 
     repeat(24) @(posedge vif.baud_o);
     for(int i=0; i<bits;i++) begin
