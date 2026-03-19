@@ -1,7 +1,8 @@
-module tb_top;
+//-----------TOP---------------
+module top;
 
 	import uvm_pkg::*;
-	import apb_uart_pkg::*;
+	import uart_test_pkg::*;
 `include "uvm_macros.svh"
 
 bit clk1;
@@ -38,7 +39,7 @@ always_ff@(posedge clk2 or negedge PRESETn) begin
 		in1.baud_o <=1'b0;
 	end
 	else if (baud_cnt==DIVISOR-1) begin
-		baud_cnt=<=0;
+		baud_cnt<=0;
 		in1.baud_o<=1'b1;
 	end
 	else begin
@@ -47,8 +48,8 @@ always_ff@(posedge clk2 or negedge PRESETn) begin
 	end
 end
 
-uart_16550 dut(.PCLK(clk),.PRESETn(in0.Presetn),.PADDR(in0.Paddr),
-.PWDATA(in0.Pwdata),.PWRITE(in0.Pwrite),.PENABLE(in0.Penable),
+uart_16550 dut(.PCLK(clk1),.PRESETn(in0.Presetn),.PADDR(in0.Paddr),
+.PWDATA(in0.Pwdata),.PWRITE(in0.Pwrite),.PENABLE(in0.Penable),.PRDATA(in0.Prdata),.baud_o(in0.baud_o),
 .PSEL(in0.Psel),.PREADY(in0.Pready),.PSLVERR(in0.Pslverr),.IRQ(in0.IRQ),.TXD(in1.rx),.RXD(in1.tx));
 
 initial begin
