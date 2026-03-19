@@ -76,8 +76,8 @@ class uart_monitor extends uvm_monitor;
     
     repeat(16) @(posedge vif.baud_o);
     `uvm_info(get_type_name(), $sformatf("monitor data=%0b", data), UVM_LOW)
-
+ monitor_port.write(r_xtn);
   endtask
-  monitor_port.write(r_xtn);
+ 
 endclass
    
