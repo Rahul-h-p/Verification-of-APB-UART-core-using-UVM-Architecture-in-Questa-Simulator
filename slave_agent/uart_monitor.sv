@@ -2,10 +2,10 @@ class uart_monitor extends uvm_monitor;
   `uvm_component_utils(uart_monitor)
   uart_agent_config m_cfg;
   virtual uart_if vif;
-  uart_xtn r_xtn;
+ read_xtn r_xtn;
   bit[7:0]  LCR;
 
-  uvm_analysis_port #(uart_xtn) monitor_port;
+  uvm_analysis_port #(read_xtn) monitor_port;
 
   function new(string name="uart_monitor",uvm_component parent);
     super.new(name,parent);
@@ -19,7 +19,7 @@ class uart_monitor extends uvm_monitor;
       `uvm_fatal("CONFIG","cannot get config in Uart_monitor")
       if(!uvm_config_db #(bit[7:0])::get(this,"*","lcr",LCR))
         `uvm_fatal("UART_mon","cannot get lcr in monitor")
-        r_xtn=uart_xtn::type_id::create("r_xtn");
+        r_xtn=read_xtn::type_id::create("r_xtn");
   endfunction
 
   function void connect_phase(uvm_phase phase);
@@ -28,11 +28,11 @@ class uart_monitor extends uvm_monitor;
   endfunction
 
   task run_phase(uvm_phase phase);
-    bit rx.busy, tx.busy;
+    bit rx_busy, tx_busy;
 
     fork
       forever begin
-        if(rx.busy == 1'b0) begin
+        if(rx_busy == 1'b0) begin
           rx_busy=1'b1;
           collect_uart(vif.rx, r_xtn.rx, r_xtn.parity);
           rx_busy=1'b0;
@@ -74,7 +74,7 @@ class uart_monitor extends uvm_monitor;
       parity=line;
     end
     
-    repeat(16) @(posege vif.baud_o);
+    repeat(16) @(posedge vif.baud_o);
     `uvm_info(get_type_name(), $sformatf("monitor data=%0b", data), UVM_LOW)
 
     monitor_port.write(r_xtn);
