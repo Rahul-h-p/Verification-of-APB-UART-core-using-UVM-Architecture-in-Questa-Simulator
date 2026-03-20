@@ -103,7 +103,7 @@ class test_fullduplex extends uart_test;
 apb_fullduplex_seq aphdseq;
 uart_fullduplex_seq uahdseq;
 apb_rd_seq read1;
-function new(string name="test_halfduplex",uvm_component parent);
+	function new(string name="test_fullduplex",uvm_component parent);
 	super.new(name,parent);
 endfunction
 
