@@ -51,6 +51,7 @@ class apb_driver extends uvm_driver #(write_xtn);
 					seq_item_port.put_response(req);
 				end
 			`uvm_info("DRIVER",$sformatf("printing from driver \n %s", req.sprint()),UVM_LOW) 
-
+	vif.drv_cb.Psel <= 1'b0;
+		vif.drv_cb.Penable <= 1'b0;
 	endtask						
 endclass
