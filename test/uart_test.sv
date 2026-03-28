@@ -77,7 +77,7 @@ function new(string name="test_halfduplex",uvm_component parent);
 endfunction
 
 function void build_phase(uvm_phase phase);
-	lcr=32'h03;
+	lcr=8'h03;
 	super.build_phase(phase);
 	aphdseq=apb_halfduplex_seq::type_id::create("aphdseq");
 	uahdseq=uart_halfduplex_seq::type_id::create("uahdseq");
@@ -93,25 +93,94 @@ task run_phase(uvm_phase phase);
 	aphdseq.start(envh.wragt_toph.wragnth[0].seqrh);
 	uahdseq.start(envh.rdagt_toph.rdagnth[0].seqrh);
 	read1.start(envh.wragt_toph.wragnth[0].seqrh);
-	#2000;
+	#200000;
 	phase.drop_objection(this);
 endtask
 endclass
+
 class test_fullduplex extends uart_test;
 `uvm_component_utils(test_fullduplex)
 
 apb_fullduplex_seq aphdseq;
 uart_fullduplex_seq uahdseq;
 apb_rd_seq read1;
-	function new(string name="test_fullduplex",uvm_component parent);
+function new(string name="test_fullduplex",uvm_component parent);
 	super.new(name,parent);
 endfunction
 
 function void build_phase(uvm_phase phase);
-	lcr=32'h03;
+	lcr=8'b00111111;
 	super.build_phase(phase);
 aphdseq=apb_fullduplex_seq::type_id::create("aphdseq");
 	uahdseq=uart_fullduplex_seq::type_id::create("uahdseq");
+	read1=apb_rd_seq::type_id::create("read1");
+
+endfunction
+
+task run_phase(uvm_phase phase);
+	super.run_phase(phase);
+	
+	phase.raise_objection(this);
+//fork
+	aphdseq.start(envh.wragt_toph.wragnth[0].seqrh);
+	uahdseq.start(envh.rdagt_toph.rdagnth[0].seqrh);
+	read1.start(envh.wragt_toph.wragnth[0].seqrh);
+
+//join
+#200000;
+	phase.drop_objection(this);
+endtask
+endclass
+
+class test_fullduplex1 extends uart_test;
+`uvm_component_utils(test_fullduplex1)
+
+apb_fullduplex1_seq aphdseq;
+uart_fullduplex_seq uahdseq;
+apb_rd_seq read1;
+function new(string name="test_fullduplex1",uvm_component parent);
+	super.new(name,parent);
+endfunction
+
+function void build_phase(uvm_phase phase);
+	lcr=8'b00111100;
+	super.build_phase(phase);
+aphdseq=apb_fullduplex1_seq::type_id::create("aphdseq");
+	uahdseq=uart_fullduplex_seq::type_id::create("uahdseq");
+	read1=apb_rd_seq::type_id::create("read1");
+
+endfunction
+
+task run_phase(uvm_phase phase);
+	super.run_phase(phase);
+	
+	phase.raise_objection(this);
+//fork
+	aphdseq.start(envh.wragt_toph.wragnth[0].seqrh);
+	uahdseq.start(envh.rdagt_toph.rdagnth[0].seqrh);
+	read1.start(envh.wragt_toph.wragnth[0].seqrh);
+
+//join
+#20000;
+	phase.drop_objection(this);
+endtask
+endclass
+
+class test_loopback extends uart_test;
+`uvm_component_utils(test_loopback)
+
+apb_loopback_seq aphdseq;
+uart_loopback_seq uahdseq;
+apb_rd_seq read1;
+function new(string name="test_loopback",uvm_component parent);
+	super.new(name,parent);
+endfunction
+
+function void build_phase(uvm_phase phase);
+	lcr=8'h03;
+	super.build_phase(phase);
+aphdseq=apb_loopback_seq::type_id::create("aphdseq");
+	uahdseq=uart_loopback_seq::type_id::create("uahdseq");
 	read1=apb_rd_seq::type_id::create("read1");
 
 endfunction
@@ -124,9 +193,9 @@ task run_phase(uvm_phase phase);
 	aphdseq.start(envh.wragt_toph.wragnth[0].seqrh);
 	uahdseq.start(envh.rdagt_toph.rdagnth[0].seqrh);
 	read1.start(envh.wragt_toph.wragnth[0].seqrh);
-	#2000;
+
+#200000;
 	phase.drop_objection(this);
 endtask
-
 
 endclass
