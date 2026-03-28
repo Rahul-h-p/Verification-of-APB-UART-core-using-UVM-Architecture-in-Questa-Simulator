@@ -28,25 +28,80 @@ task body();
 
 req=write_xtn::type_id::create("req");
 //Divisor MSB
+req=write_xtn::type_id::create("req");
 start_item(req);
 assert(req.randomize() with {Paddr==32'h20;Pwrite==1;Pwdata==0;});
 finish_item(req);
 //Divisor LSB
+req=write_xtn::type_id::create("req");
 start_item(req);
 assert(req.randomize() with {Paddr==32'h1c;Pwrite==1;Pwdata==54;});
 finish_item(req);
 //LCR configuration
+req=write_xtn::type_id::create("req");
 start_item(req);
 assert(req.randomize() with {Paddr==32'h0c;Pwrite==1;Pwdata==LCR;});
 finish_item(req);
 //FIFO enable
+req=write_xtn::type_id::create("req");
 start_item(req);
-assert(req.randomize() with {Paddr==32'h08;Pwrite==1;Pwdata==32'h6;});
+assert(req.randomize() with {Paddr==32'h08;Pwrite==1;Pwdata==32'd6;});
 finish_item(req);
 //Interupt enable
+req=write_xtn::type_id::create("req");
 start_item(req);
-assert(req.randomize() with {Paddr==32'h04;Pwrite==1;Pwdata==32'h01;});
+assert(req.randomize() with {Paddr==32'h04;Pwrite==1;Pwdata==32'd1;});
 finish_item(req);
+endtask
+endclass
+
+
+//-------------------------FULL DUPLEX 1 SEQ---------------------------
+class apb_fullduplex1_seq extends apb_seq;
+`uvm_object_utils(apb_fullduplex1_seq)
+write_xtn req;
+function new(string name="apb_fullduplex1_seq");
+	super.new(name);
+endfunction
+
+task body();
+	super.body();
+req=write_xtn::type_id::create("req");
+//Divisor MSB
+start_item(req);
+assert(req.randomize() with {Paddr==32'h20;Pwrite==1;Pwdata==0;});
+finish_item(req);
+
+//Divisor LSB
+req=write_xtn::type_id::create("req");
+start_item(req);
+assert(req.randomize() with {Paddr==32'h1c;Pwrite==1;Pwdata==54;});
+finish_item(req);
+
+//LCR configuration
+req=write_xtn::type_id::create("req");
+start_item(req);
+assert(req.randomize() with {Paddr==32'h0c;Pwrite==1;Pwdata==LCR;});
+finish_item(req);
+
+//FIFO enable
+req=write_xtn::type_id::create("req");
+start_item(req);
+assert(req.randomize() with {Paddr==32'h08;Pwrite==1;Pwdata==32'd192;});
+finish_item(req);
+
+//Interupt enable
+req=write_xtn::type_id::create("req");
+start_item(req);
+assert(req.randomize() with {Paddr==32'h04;Pwrite==1;Pwdata==32'd4;});
+finish_item(req);
+
+//THR
+req=write_xtn::type_id::create("req");
+start_item(req);
+assert(req.randomize() with {Paddr==32'h00; Pwrite==1;Pwdata inside {[1:255]};});
+finish_item(req);
+
 endtask
 endclass
 
@@ -66,22 +121,37 @@ req=write_xtn::type_id::create("req");
 start_item(req);
 assert(req.randomize() with {Paddr==32'h20;Pwrite==1;Pwdata==0;});
 finish_item(req);
+
 //Divisor LSB
+req=write_xtn::type_id::create("req");
 start_item(req);
 assert(req.randomize() with {Paddr==32'h1c;Pwrite==1;Pwdata==54;});
 finish_item(req);
+
 //LCR configuration
+req=write_xtn::type_id::create("req");
 start_item(req);
 assert(req.randomize() with {Paddr==32'h0c;Pwrite==1;Pwdata==LCR;});
 finish_item(req);
+
 //FIFO enable
+req=write_xtn::type_id::create("req");
 start_item(req);
-assert(req.randomize() with {Paddr==32'h08;Pwrite==1;Pwdata==32'h6;});
+assert(req.randomize() with {Paddr==32'h08;Pwrite==1;Pwdata==32'd6;});
 finish_item(req);
+
 //Interupt enable
+req=write_xtn::type_id::create("req");
 start_item(req);
-assert(req.randomize() with {Paddr==32'h04;Pwrite==1;Pwdata==32'h01;});
+assert(req.randomize() with {Paddr==32'h04;Pwrite==1;Pwdata==32'd1;});
 finish_item(req);
+
+//THR
+req=write_xtn::type_id::create("req");
+start_item(req);
+assert(req.randomize() with {Paddr==32'h00; Pwrite==1;Pwdata inside {[1:255]};});
+finish_item(req);
+
 endtask
 endclass
 
@@ -110,15 +180,15 @@ assert(req.randomize() with {Paddr==32'h0c;Pwrite==1;Pwdata==LCR;});
 finish_item(req);
 //FIFO enable FCR
 start_item(req);
-assert(req.randomize() with {Paddr==32'h08;Pwrite==1;Pwdata==32'h6;});
+assert(req.randomize() with {Paddr==32'h08;Pwrite==1;Pwdata==32'd6;});
 finish_item(req);
 //Interupt enable IER
 start_item(req);
-assert(req.randomize() with {Paddr==32'h04;Pwrite==1;Pwdata==32'h01;});
+assert(req.randomize() with {Paddr==32'h04;Pwrite==1;Pwdata==32'd1;});
 finish_item(req);
 //MCR configuration- ENABLE LOOPBACK
 start_item(req);
-assert(req.randomize() with {Paddr==32'h04;Pwrite==1;Pwdata==32'b00010000;});
+assert(req.randomize() with {Paddr==32'h10;Pwrite==1;Pwdata==8'b00010000;});
 finish_item(req);
 //THR
 start_item(req);
@@ -127,7 +197,7 @@ finish_item(req);
 
 endtask
 endclass
-//-----------------------Read seq--------------------
+//-----------------------Read seq to clear interrupt--------------------
 class apb_rd_seq extends apb_seq;
 `uvm_object_utils(apb_rd_seq)
 write_xtn req;
@@ -146,18 +216,21 @@ finish_item(req);
 get_response(req);
 
 if(req.iir[3:0]==4'h4) begin
+req=write_xtn::type_id::create("req");
 start_item(req);
 assert(req.randomize() with {Paddr==32'h00; Pwrite==0;});
 finish_item(req);
 end
 
 if(req.iir[3:0]==4'h6) begin
+req=write_xtn::type_id::create("req");
 start_item(req);
 assert(req.randomize() with {Paddr==32'h14; Pwrite==0;});
 finish_item(req);
 end
 
 if(req.iir[3:0]==4'h8) begin
+req=write_xtn::type_id::create("req");
 start_item(req);
 assert(req.randomize() with {Paddr==32'h00; Pwrite==0;});
 finish_item(req);
